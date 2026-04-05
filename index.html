@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TroelsLLM - GPT from Scratch</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TroelsLLM</h1>
+            <p class="subtitle">GPT Model Built from Scratch</p>
+            <p class="info">Learning from "Build a Large Language Model (From Scratch)" by Sebastian Raschka</p>
+        </header>
+
+        <div class="chat-container">
+            <div id="chat-messages" class="chat-messages">
+                <div class="message system-message">
+                    <div class="message-content">
+                        <p>👋 Welcome to TroelsLLM!</p>
+                        <p>This is a working demonstration of a GPT model. Currently using a small pre-trained model while I build the custom model from scratch.</p>
+                        <p>Try asking me anything!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <textarea 
+                    id="user-input" 
+                    placeholder="Type your message here..." 
+                    rows="1"
+                ></textarea>
+                <button id="send-button" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="model-info">
+                <strong>Model:</strong> GPT-2 (124M parameters) | 
+                <strong>Status:</strong> <span id="model-status">Loading...</span>
+            </div>
+            <div class="github-link">
+                <a href="https://github.com/mrtsm/troelsllm" target="_blank">View on GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
