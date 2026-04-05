@@ -1,6 +1,6 @@
 # TroelsLLM
 
-A ChatGPT-style web interface demonstrating a GPT model built from scratch, following Sebastian Raschka's book "Build a Large Language Model (From Scratch)".
+A ChatGPT-style web interface demonstrating a GPT model built from scratch.
 
 ## 🚀 Live Demo
 
@@ -8,7 +8,7 @@ A ChatGPT-style web interface demonstrating a GPT model built from scratch, foll
 
 ## 📖 About
 
-This project is a learning journey to understand how Large Language Models work by building one from scratch. The website provides an interactive interface to chat with the model.
+This project demonstrates how Large Language Models work by building one from scratch. The website provides an interactive interface to chat with the model.
 
 ### Current Status
 
@@ -19,24 +19,22 @@ This project is a learning journey to understand how Large Language Models work 
 - Deployed on GitHub Pages
 
 **Phase 2 (In Progress):** 🚧
-- Replace with custom GPT model built from book code
-- Implement model architecture visualization
-- Add training progress tracking
+- Custom GPT model implementation
+- Model architecture visualization
+- Training progress tracking
 
 ## 🛠️ Technology Stack
 
 - **Frontend:** HTML5, CSS3, Vanilla JavaScript
 - **Model:** Transformers.js (Xenova/gpt2)
 - **Hosting:** GitHub Pages
-- **Book Reference:** "Build a Large Language Model (From Scratch)" by Sebastian Raschka
 
-## 📚 Learning Progress
+## 📚 Development Progress
 
-Following the book chapters:
-- ✅ Chapter 2: Working with Text Data (Tokenization, Embeddings)
-- ✅ Chapter 3: Coding Attention Mechanisms
-- ✅ Chapter 4: Implementing a GPT Model from Scratch
-- 🚧 Chapter 5: Pretraining on Unlabeled Data (Next)
+- ✅ Tokenization & Embeddings
+- ✅ Attention Mechanisms
+- ✅ GPT Model Architecture
+- 🚧 Training & Optimization (In Progress)
 
 ## 🏗️ Model Architecture
 
@@ -107,19 +105,19 @@ User Input → Tokenization → Model Forward Pass → Token Generation → Disp
 
 ### Key Components
 
-**1. Tokenization (Chapter 2)**
+**1. Tokenization**
 - Text is split into tokens using BPE (Byte Pair Encoding)
 - Each token is mapped to an ID
 
-**2. Embeddings (Chapter 2)**
+**2. Embeddings**
 - Token IDs are converted to dense vectors
 - Positional encodings are added
 
-**3. Attention Mechanism (Chapter 3)**
+**3. Attention Mechanism**
 - Self-attention allows tokens to focus on relevant context
 - Multi-head attention captures different relationships
 
-**4. Transformer Blocks (Chapter 4)**
+**4. Transformer Blocks**
 - Stacked layers of attention + feedforward networks
 - Layer normalization and residual connections
 
@@ -151,13 +149,11 @@ generator = await pipeline('text-generation', 'Xenova/gpt2');
 
 ## 📚 Resources
 
-- **Book:** [Build a Large Language Model (From Scratch)](https://www.manning.com/books/build-a-large-language-model-from-scratch) by Sebastian Raschka
-- **Code Repository:** [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch)
 - **Transformers.js:** [xenova/transformers.js](https://github.com/xenova/transformers.js)
 
 ## 🤝 Contributing
 
-This is a personal learning project, but suggestions and feedback are welcome! Open an issue or submit a pull request.
+Suggestions and feedback are welcome! Open an issue or submit a pull request.
 
 ## 📄 License
 
@@ -165,10 +161,9 @@ MIT License - feel free to use this code for your own learning!
 
 ## 🙏 Acknowledgments
 
-- Sebastian Raschka for the excellent book
 - Xenova for Transformers.js
 - The open-source ML community
 
 ---
 
-**Built while learning** 📚 | **Deployed on GitHub Pages** 🚀 | **Continuously improving** 🔄
+**Built with passion** 📚 | **Deployed on GitHub Pages** 🚀 | **Continuously improving** 🔄
