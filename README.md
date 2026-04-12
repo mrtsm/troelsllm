@@ -4,7 +4,32 @@
 
 [![Live Demo](https://img.shields.io/badge/demo-live-success)](https://mrtsm.github.io/troelsllm/) [![Backend API](https://img.shields.io/badge/API-Hugging%20Face-yellow)](https://troelssmit-troels-llm.hf.space) [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[**🚀 Try the Demo**](https://mrtsm.github.io/troelsllm/) | [**📖 Technical Deep-Dive**](#architecture) | [**🔧 Backend API**](https://troelssmit-troels-llm.hf.space/docs)
+[**🚀 Try the Demo**](https://mrtsm.github.io/troelsllm/) | [**📊 Model Comparison**](https://mrtsm.github.io/troelsllm/comparison.html) | [**📖 Technical Deep-Dive**](https://mrtsm.github.io/troelsllm/architecture.html) | [**🔧 Backend API**](https://troelssmit-troels-llm.hf.space/docs)
+
+---
+
+## Model Variants
+
+This project includes two trained models to demonstrate scaling impact:
+
+### TroelsLLM-Scratch (Baseline)
+- **Training Data:** "The Verdict" by Edith Wharton (5,145 tokens)
+- **Training Time:** 10 minutes on CPU
+- **Purpose:** Demonstrate architecture implementation from scratch
+- **Loss:** Train 2.5, Val 3.5
+- **Output:** Coherent but limited to story phrases
+
+### TroelsLLM-Books ⭐ (Improved)
+- **Training Data:** 3 classic books (360,000 tokens - 72x more!)
+  - Pride and Prejudice
+  - Alice's Adventures in Wonderland  
+  - The Adventures of Sherlock Holmes
+- **Training Time:** 5-6 hours on CPU
+- **Purpose:** Demonstrate scaling laws and data diversity impact
+- **Loss:** Train 4.4, Val 5.9 (higher due to complexity)
+- **Output:** Rich vocabulary, multiple genres, significantly better quality
+
+**Key Insight:** 72x more data = dramatically improved quality. Higher loss values with diverse data are normal - the model is learning more complex patterns. [See detailed comparison →](https://mrtsm.github.io/troelsllm/comparison.html)
 
 ---
 

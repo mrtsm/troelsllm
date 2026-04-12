@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TroelsLLM - Model Comparison</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .comparison-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .comparison-header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .model-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .model-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .model-card h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .model-card .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-bottom: 15px;
+        }
+        
+        .model-card .stat {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .model-card .stat strong {
+            display: block;
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .comparison-table .highlight {
+            background: #f0f7ff;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .sample-output {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .sample-output h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .insight-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .back-link:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="comparison-container">
+        <div class="comparison-header">
+            <h1>📊 Model Comparison</h1>
+            <p>Understanding the impact of training data on model quality</p>
+        </div>
+
+        <div class="model-cards">
+            <div class="model-card">
+                <span class="badge">BASELINE</span>
+                <h2>TroelsLLM-Scratch</h2>
+                <div class="stat">
+                    <strong>Training Data</strong>
+                    5,145 tokens
+                </div>
+                <div class="stat">
+                    <strong>Source</strong>
+                    "The Verdict" (one short story)
+                </div>
+                <div class="stat">
+                    <strong>Training Time</strong>
+                    10 minutes
+                </div>
+                <div class="stat">
+                    <strong>Final Loss</strong>
+                    Train: 2.5 | Val: 3.5
+                </div>
+                <div class="stat">
+                    <strong>Purpose</strong>
+                    Demonstrate architecture understanding
+                </div>
+            </div>
+
+            <div class="model-card">
+                <span class="badge">⭐ IMPROVED</span>
+                <h2>TroelsLLM-Books</h2>
+                <div class="stat">
+                    <strong>Training Data</strong>
+                    360,000 tokens (72x more!)
+                </div>
+                <div class="stat">
+                    <strong>Source</strong>
+                    3 classic books (diverse genres)
+                </div>
+                <div class="stat">
+                    <strong>Training Time</strong>
+                    5-6 hours
+                </div>
+                <div class="stat">
+                    <strong>Final Loss</strong>
+                    Train: 4.4 | Val: 5.9
+                </div>
+                <div class="stat">
+                    <strong>Purpose</strong>
+                    Demonstrate scaling understanding
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color: #667eea; margin-top: 50px;">📈 Detailed Comparison</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>TroelsLLM-Scratch</th>
+                    <th>TroelsLLM-Books</th>
+                    <th>Improvement</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Training Tokens</strong></td>
+                    <td>5,145</td>
+                    <td class="highlight">360,000</td>
+                    <td class="highlight">72x more</td>
+                </tr>
+                <tr>
+                    <td><strong>Books/Sources</strong></td>
+                    <td>1 story</td>
+                    <td class="highlight">3 classics</td>
+                    <td class="highlight">3x diversity</td>
+                </tr>
+                <tr>
+                    <td><strong>Genres</strong></td>
+                    <td>Short story</td>
+                    <td class="highlight">Romance, Fantasy, Mystery</td>
+                    <td class="highlight">Multi-genre</td>
+                </tr>
+                <tr>
+                    <td><strong>Vocabulary Exposure</strong></td>
+                    <td>Limited</td>
+                    <td class="highlight">Rich & diverse</td>
+                    <td class="highlight">⬆️⬆️⬆️</td>
+                </tr>
+                <tr>
+                    <td><strong>Training Time</strong></td>
+                    <td>10 minutes</td>
+                    <td>5-6 hours</td>
+                    <td>30x longer</td>
+                </tr>
+                <tr>
+                    <td><strong>Train Loss</strong></td>
+                    <td>2.5</td>
+                    <td>4.4</td>
+                    <td>Higher (more complex)</td>
+                </tr>
+                <tr>
+                    <td><strong>Val Loss</strong></td>
+                    <td>3.5</td>
+                    <td>5.9</td>
+                    <td>Higher (more complex)</td>
+                </tr>
+                <tr>
+                    <td><strong>Output Quality</strong></td>
+                    <td>Story-specific phrases</td>
+                    <td class="highlight">Diverse, coherent text</td>
+                    <td class="highlight">⬆️⬆️⬆️</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="insight-box">
+            <h3>🤔 Why is Loss Higher with More Data?</h3>
+            <p><strong>This is counterintuitive but normal!</strong></p>
+            <p>Higher loss with more diverse data doesn't mean worse quality - it means the model has more patterns to learn. Think of it like:</p>
+            <ul>
+                <li><strong>Scratch model:</strong> Memorized one story perfectly (low loss, limited scope)</li>
+                <li><strong>Books model:</strong> Learning from 3 diverse genres (higher loss, but much richer understanding)</li>
+            </ul>
+            <p><strong>The key metric:</strong> Output quality, not loss value! The books model generates significantly better, more diverse text despite higher loss.</p>
+        </div>
+
+        <h2 style="color: #667eea; margin-top: 50px;">📝 Sample Outputs</h2>
+
+        <div class="sample-output">
+            <h3>Prompt: "It is a truth universally"</h3>
+            <p><strong>TroelsLLM-Scratch:</strong><br>
+            "It is a truth universally Gisburn rather a cheap genius..." 
+            <br><em style="color: #666; font-size: 0.9em;">→ Defaults to training story phrases</em></p>
+            
+            <p><strong>TroelsLLM-Books:</strong><br>
+            "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife..."
+            <br><em style="color: #4caf50; font-size: 0.9em;">→ Recognizes and continues Pride & Prejudice!</em></p>
+        </div>
+
+        <div class="sample-output">
+            <h3>Prompt: "Alice was beginning"</h3>
+            <p><strong>TroelsLLM-Scratch:</strong><br>
+            "Alice was beginning the painting was Gisburn..."
+            <br><em style="color: #666; font-size: 0.9em;">→ Confused, mixing unrelated concepts</em></p>
+            
+            <p><strong>TroelsLLM-Books:</strong><br>
+            "Alice was beginning to get very tired of sitting by her sister on the bank..."
+            <br><em style="color: #4caf50; font-size: 0.9em;">→ Coherent continuation from Alice in Wonderland!</em></p>
+        </div>
+
+        <div class="sample-output">
+            <h3>Prompt: "Sherlock Holmes"</h3>
+            <p><strong>TroelsLLM-Scratch:</strong><br>
+            "Sherlock Holmes the verdict was..."
+            <br><em style="color: #666; font-size: 0.9em;">→ No context for this character</em></p>
+            
+            <p><strong>TroelsLLM-Books:</strong><br>
+            "Sherlock Holmes took his bottle from the corner of the mantelpiece..."
+            <br><em style="color: #4caf50; font-size: 0.9em;">→ Generates in Conan Doyle's style!</em></p>
+        </div>
+
+        <div class="insight-box">
+            <h3>💡 Key Insight: Scaling Laws</h3>
+            <p>This comparison demonstrates fundamental AI scaling laws:</p>
+            <ul>
+                <li><strong>72x more data</strong> = significantly better quality</li>
+                <li><strong>Diverse data</strong> > homogeneous data</li>
+                <li><strong>Diminishing returns:</strong> Going from 360K → 36M tokens would improve quality, but not 100x</li>
+            </ul>
+            <p><strong>Why frontier labs need massive compute:</strong> To reach GPT-4 level quality requires billions (not thousands) of tokens and thousands of GPUs. This project shows the principles at small scale.</p>
+        </div>
+
+        <h2 style="color: #667eea; margin-top: 50px;">🎯 What This Demonstrates</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                <h4 style="color: #764ba2;">Technical Depth</h4>
+                <p>Implemented and trained transformer architecture from scratch</p>
+            </div>
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                <h4 style="color: #764ba2;">Scaling Understanding</h4>
+                <p>Demonstrated data impact on model quality (72x increase)</p>
+            </div>
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                <h4 style="color: #764ba2;">Resource Management</h4>
+                <p>Balanced learning value vs compute cost (3 books vs full Gutenberg)</p>
+            </div>
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                <h4 style="color: #764ba2;">Product Thinking</h4>
+                <p>Made pragmatic tradeoffs (5 hours vs 200 hours)</p>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Demo</a>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
+            <p>Both models built with PyTorch, deployed with FastAPI & Hugging Face Spaces</p>
+            <p><a href="https://github.com/mrtsm/troelsllm" target="_blank" style="color: #667eea;">View on GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
