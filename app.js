@@ -1,23 +1,35 @@
-import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
-
-let generator = null;
-let isGenerating = false;
+// TroelsLLM - Custom trained GPT model
 const API_URL = 'https://troelssmit-troels-llm.hf.space';
 
-// Initialize the model
-async function initModel() {
+let isGenerating = false;
+let apiReady = false;
+
+// Check API status on page load
+async function checkAPIStatus() {
     try {
-        document.getElementById('model-status').textContent = 'Loading...';
+        document.getElementById('model-status').textContent = 'Connecting...';
         
-        // Load the text generation pipeline with GPT-2
-        generator = await pipeline('text-generation', 'Xenova/gpt2');
+        const response = await fetch(`${API_URL}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         
-        document.getElementById('model-status').textContent = 'Ready';
-        console.log('Model loaded successfully!');
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('model-status').textContent = 'Ready';
+            apiReady = true;
+            console.log('Connected to TroelsLLM API:', data);
+        } else {
+            throw new Error('API not responding');
+        }
     } catch (error) {
-        console.error('Error loading model:', error);
-        document.getElementById('model-status').textContent = 'Error';
-        addMessage('system', 'Failed to load model. Please refresh the page.');
+        console.error('Error connecting to API:', error);
+        document.getElementById('model-status').textContent = 'Waking up...';
+        apiReady = false;
+        // Show helpful message
+        addMessage('system', '🔄 Backend is waking up (first load takes ~10 seconds). Please try sending a message!');
     }
 }
 
@@ -37,6 +49,9 @@ function addMessage(type, content) {
                 <div class="loading-dot"></div>
                 <div class="loading-dot"></div>
             </div>
+            <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                Generating response... (takes 2-10 seconds)
+            </div>
         `;
     } else {
         contentDiv.textContent = content;
@@ -51,17 +66,20 @@ function addMessage(type, content) {
 
 // Send message
 async function sendMessage() {
-    if (isGenerating) return;
+    if (isGenerating) {
+        console.log('Already generating, please wait...');
+        return;
+    }
     
     const input = document.getElementById('user-input');
     const message = input.value.trim();
     
-    if (!message) return;
-    
-    if (!generator) {
-        addMessage('system', 'Model is still loading. Please wait...');
+    if (!message) {
+        console.log('Empty message, ignoring');
         return;
     }
+    
+    console.log('Sending message:', message);
     
     // Add user message
     addMessage('user', message);
@@ -70,51 +88,75 @@ async function sendMessage() {
     
     // Disable input while generating
     isGenerating = true;
-    document.getElementById('send-button').disabled = true;
+    const sendButton = document.getElementById('send-button');
+    const originalButtonText = sendButton.innerHTML;
+    
+    sendButton.innerHTML = '⏳ Generating...';
+    sendButton.disabled = true;
     input.disabled = true;
     
-    // Show loading
+    // Show loading message with timing info
     const loadingMessage = addMessage('assistant', 'loading');
     
     try {
-        // Generate response
-        const result = await generator(message, {
-            max_new_tokens: 50,
-            do_sample: true,
-            temperature: 0.7,
-            top_k: 50,
-            top_p: 0.95
+        console.log('Calling API:', API_URL + '/generate');
+        
+        // Call backend API
+        const response = await fetch(`${API_URL}/generate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prompt: message,
+                max_tokens: 50,
+                temperature: 0.7,
+                top_k: 50
+            })
         });
+        
+        console.log('API response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('API response data:', data);
         
         // Remove loading message
         loadingMessage.remove();
         
-        // Extract generated text
-        const generatedText = result[0].generated_text;
+        // Add AI response
+        addMessage('assistant', data.response);
         
-        // Remove the prompt from the generated text if it's included
-        let response = generatedText;
-        if (generatedText.startsWith(message)) {
-            response = generatedText.slice(message.length).trim();
+        // Update status if it was waking up
+        if (!apiReady) {
+            document.getElementById('model-status').textContent = 'Ready';
+            apiReady = true;
         }
-        
-        // If response is empty, use the full generated text
-        if (!response) {
-            response = generatedText;
-        }
-        
-        // Add assistant message
-        addMessage('assistant', response);
         
     } catch (error) {
         console.error('Generation error:', error);
+        
+        // Remove loading message
         loadingMessage.remove();
-        addMessage('system', 'Sorry, there was an error generating a response. Please try again.');
+        
+        // Show helpful error message
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            addMessage('system', '🔄 Backend is starting up (first request can take 10-15 seconds). Please try again!');
+        } else {
+            addMessage('system', `⚠️ Error: ${error.message}. Please try again in a moment.`);
+        }
     } finally {
+        // Re-enable input
         isGenerating = false;
-        document.getElementById('send-button').disabled = false;
+        sendButton.innerHTML = originalButtonText;
+        sendButton.disabled = false;
         input.disabled = false;
         input.focus();
+        
+        console.log('Generation complete, input re-enabled');
     }
 }
 
@@ -122,9 +164,12 @@ async function sendMessage() {
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('user-input');
     
+    console.log('DOM loaded, setting up event listeners');
+    
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
+            console.log('Enter key pressed, sending message');
             sendMessage();
         }
     });
@@ -135,9 +180,16 @@ document.addEventListener('DOMContentLoaded', () => {
         input.style.height = input.scrollHeight + 'px';
     });
     
-    // Initialize model
-    initModel();
+    // Check API status
+    checkAPIStatus();
+    
+    // Add welcome message
+    setTimeout(() => {
+        addMessage('system', '🤖 Welcome to TroelsLLM! This is a GPT model I trained from scratch. Try asking it to continue a sentence!');
+    }, 500);
 });
 
 // Make sendMessage available globally
 window.sendMessage = sendMessage;
+
+console.log('TroelsLLM app.js loaded successfully');
