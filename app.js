@@ -34,7 +34,7 @@ async function checkAPIStatus() {
 }
 
 // Add message to chat
-function addMessage(type, content) {
+function addMessage(type, content, metadata = {}) {
     const chatMessages = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
@@ -55,6 +55,28 @@ function addMessage(type, content) {
         `;
     } else {
         contentDiv.textContent = content;
+        
+        // Add copy button for assistant messages
+        if (type === 'assistant' && content !== 'loading') {
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'message-actions';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-button';
+            copyBtn.innerHTML = '📋 Copy';
+            copyBtn.onclick = () => copyToClipboard(content, copyBtn);
+            
+            actionsDiv.appendChild(copyBtn);
+            messageDiv.appendChild(actionsDiv);
+            
+            // Add timing info if available
+            if (metadata.duration) {
+                const timingDiv = document.createElement('div');
+                timingDiv.className = 'message-timing';
+                timingDiv.textContent = `Generated in ${metadata.duration}s`;
+                messageDiv.appendChild(timingDiv);
+            }
+        }
     }
     
     messageDiv.appendChild(contentDiv);
@@ -101,6 +123,8 @@ async function sendMessage() {
     try {
         console.log('Calling API:', API_URL + '/generate');
         
+        const startTime = performance.now();
+        
         // Call backend API
         const response = await fetch(`${API_URL}/generate`, {
             method: 'POST',
@@ -127,8 +151,11 @@ async function sendMessage() {
         // Remove loading message
         loadingMessage.remove();
         
-        // Add AI response
-        addMessage('assistant', data.response);
+        // Calculate duration
+        const duration = ((performance.now() - startTime) / 1000).toFixed(1);
+        
+        // Add AI response with timing
+        addMessage('assistant', data.response, { duration });
         
         // Update status if it was waking up
         if (!apiReady) {
@@ -184,6 +211,50 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAPIStatus();
 });
 
+// Use example prompt
+function useExample(text) {
+    const input = document.getElementById('user-input');
+    input.value = text;
+    input.focus();
+    // Auto-send
+    setTimeout(() => sendMessage(), 100);
+}
+
+// Copy to clipboard
+function copyToClipboard(text, button) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '✓ Copied!';
+        button.style.color = '#4caf50';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        button.innerHTML = '✗ Failed';
+    });
+}
+
+// Clear chat
+function clearChat() {
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML = `
+        <div class="message system-message">
+            <div class="message-content">
+                <p>👋 Welcome to TroelsLLM!</p>
+                <p>A working GPT model (162M parameters) built and trained from scratch.</p>
+                <p><strong>Try these prompts from the training data:</strong></p>
+                <div class="example-prompts">
+                    <button class="example-prompt" onclick="useExample('I HAD always thought')">"I HAD always thought"</button>
+                    <button class="example-prompt" onclick="useExample('Jack Gisburn was')">"Jack Gisburn was"</button>
+                    <button class="example-prompt" onclick="useExample('The painting')">"The painting"</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // Toggle About section
 function toggleAbout() {
     const content = document.getElementById('about-content');
@@ -200,6 +271,8 @@ function toggleAbout() {
 
 // Make functions available globally
 window.sendMessage = sendMessage;
+window.useExample = useExample;
+window.clearChat = clearChat;
 window.toggleAbout = toggleAbout;
 
 console.log('TroelsLLM app.js loaded successfully');

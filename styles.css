@@ -399,3 +399,118 @@ footer {
         padding: 12px;
     }
 }
+
+/* Example Prompts */
+.example-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.example-prompt {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.example-prompt:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.example-prompt:active {
+    transform: translateY(0);
+}
+
+/* Chat Actions */
+.chat-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f9f9f9;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    background: #f5f5f5;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.action-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Message Actions */
+.message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.copy-button {
+    padding: 4px 12px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.copy-button:hover {
+    background: #f5f5f5;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+/* Message Timing */
+.message-timing {
+    font-size: 0.75em;
+    color: #999;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .example-prompts {
+        flex-direction: column;
+    }
+    
+    .example-prompt {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .chat-actions {
+        padding: 8px 15px;
+    }
+    
+    .action-button {
+        padding: 5px 10px;
+        font-size: 0.85em;
+    }
+}

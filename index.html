@@ -14,12 +14,26 @@
         </header>
 
         <div class="chat-container">
+            <div class="chat-actions">
+                <button class="action-button" onclick="clearChat()" title="Clear conversation">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear
+                </button>
+            </div>
             <div id="chat-messages" class="chat-messages">
                 <div class="message system-message">
                     <div class="message-content">
                         <p>👋 Welcome to TroelsLLM!</p>
-                        <p>This is a working demonstration of a GPT model built from scratch.</p>
-                        <p>Try asking me anything!</p>
+                        <p>A working GPT model (162M parameters) built and trained from scratch.</p>
+                        <p><strong>Try these prompts from the training data:</strong></p>
+                        <div class="example-prompts">
+                            <button class="example-prompt" onclick="useExample('I HAD always thought')">"I HAD always thought"</button>
+                            <button class="example-prompt" onclick="useExample('Jack Gisburn was')">"Jack Gisburn was"</button>
+                            <button class="example-prompt" onclick="useExample('The painting')">"The painting"</button>
+                        </div>
                     </div>
                 </div>
             </div>
