@@ -182,11 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check API status
     checkAPIStatus();
-    
-    // Add welcome message
-    setTimeout(() => {
-        addMessage('system', '🤖 Welcome to TroelsLLM! This is a GPT model I trained from scratch. Try asking it to continue a sentence!');
-    }, 500);
 });
 
 // Toggle About section
