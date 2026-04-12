@@ -189,7 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
-// Make sendMessage available globally
+// Toggle About section
+function toggleAbout() {
+    const content = document.getElementById('about-content');
+    const arrow = document.getElementById('about-arrow');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        arrow.textContent = '▼';
+    } else {
+        content.style.display = 'none';
+        arrow.textContent = '▶';
+    }
+}
+
+// Make functions available globally
 window.sendMessage = sendMessage;
+window.toggleAbout = toggleAbout;
 
 console.log('TroelsLLM app.js loaded successfully');

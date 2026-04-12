@@ -39,15 +39,97 @@
             </div>
         </div>
 
+        <div class="about-section">
+            <button class="about-toggle" onclick="toggleAbout()">
+                <span id="about-arrow">▶</span> About This Model
+            </button>
+            <div id="about-content" class="about-content" style="display: none;">
+                <div class="about-intro">
+                    <p><strong>This is a GPT model I built and trained from scratch</strong> following "Build a Large Language Model (From Scratch)" by Sebastian Raschka.</p>
+                    <p>Every component was implemented by hand - no pre-built transformers library!</p>
+                </div>
+                
+                <div class="key-components">
+                    <h3>🔧 Key Components</h3>
+                    
+                    <div class="component">
+                        <h4>1. Tokenization</h4>
+                        <ul>
+                            <li>Text is split into tokens using <strong>BPE (Byte Pair Encoding)</strong></li>
+                            <li>Each token is mapped to an ID from a 50,257-token vocabulary</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component">
+                        <h4>2. Embeddings</h4>
+                        <ul>
+                            <li>Token IDs are converted to <strong>dense 768-dimensional vectors</strong></li>
+                            <li>Positional encodings are added so the model knows word order</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component">
+                        <h4>3. Attention Mechanism</h4>
+                        <ul>
+                            <li><strong>Self-attention</strong> allows tokens to focus on relevant context</li>
+                            <li><strong>Multi-head attention (12 heads)</strong> captures different relationships simultaneously</li>
+                            <li>Causal masking prevents "seeing the future" during training</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component">
+                        <h4>4. Transformer Blocks</h4>
+                        <ul>
+                            <li><strong>12 stacked layers</strong> of attention + feedforward networks</li>
+                            <li>Layer normalization stabilizes training</li>
+                            <li>Residual connections ensure gradients flow through all layers</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component">
+                        <h4>5. Text Generation</h4>
+                        <ul>
+                            <li><strong>Autoregressive:</strong> generates one token at a time</li>
+                            <li>Each token is fed back as input to generate the next</li>
+                            <li>Temperature and top-k sampling control randomness</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="model-specs">
+                    <h3>📊 Model Specifications</h3>
+                    <ul>
+                        <li><strong>Architecture:</strong> GPT-2 (124M parameters)</li>
+                        <li><strong>Parameters:</strong> 162,419,712 trainable weights</li>
+                        <li><strong>Layers:</strong> 12 transformer blocks</li>
+                        <li><strong>Attention Heads:</strong> 12 per layer</li>
+                        <li><strong>Embedding Dimension:</strong> 768</li>
+                        <li><strong>Context Length:</strong> 256 tokens</li>
+                        <li><strong>Vocabulary Size:</strong> 50,257 tokens (GPT-2 tokenizer)</li>
+                        <li><strong>Training Data:</strong> "The Verdict" by Edith Wharton</li>
+                        <li><strong>Training Time:</strong> ~10 minutes (10 epochs)</li>
+                    </ul>
+                </div>
+                
+                <div class="built-with">
+                    <h3>🛠️ Built With</h3>
+                    <ul>
+                        <li><strong>Backend:</strong> Python, PyTorch, FastAPI</li>
+                        <li><strong>Frontend:</strong> Vanilla JavaScript, HTML5, CSS3</li>
+                        <li><strong>Hosting:</strong> Hugging Face Spaces (backend), GitHub Pages (frontend)</li>
+                        <li><strong>Implementation:</strong> Hand-coded from scratch (no transformers library!)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <footer>
             <div class="model-info">
-                <strong>Model:</strong> GPT-2 (124M parameters) | 
+                <strong>Model:</strong> GPT-2 (162M parameters) | 
                 <strong>Status:</strong> <span id="model-status">Loading...</span>
             </div>
             <div class="github-link">
-                <a href="https://github.com/mrtsm/troelsllm" target="_blank">View on GitHub</a>
-            </div>
-        </footer>
+                <a href="https://github.com/mrtsm/troelsllm" target=
     </div>
 
     <script type="module" src="app.js"></script>
