@@ -2,6 +2,7 @@ import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17
 
 let generator = null;
 let isGenerating = false;
+const API_URL = 'https://troelssmit-troels-llm.hf.space';
 
 // Initialize the model
 async function initModel() {
