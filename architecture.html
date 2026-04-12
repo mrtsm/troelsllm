@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TroelsLLM - Architecture Deep-Dive</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .arch-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .arch-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .arch-header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .arch-diagram {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .arch-section {
+            margin: 40px 0;
+        }
+        
+        .arch-section h2 {
+            color: #764ba2;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .spec-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .spec-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .spec-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .back-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        .flow-step {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .flow-step strong {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="arch-container">
+        <div class="arch-header">
+            <h1>🧠 TroelsLLM Architecture</h1>
+            <p>A deep-dive into how this GPT model works under the hood</p>
+        </div>
+
+        <div class="arch-section">
+            <h2>Model Specifications</h2>
+            <div class="spec-grid">
+                <div class="spec-card">
+                    <h3>162M</h3>
+                    <p>Total Parameters</p>
+                </div>
+                <div class="spec-card">
+                    <h3>12</h3>
+                    <p>Transformer Layers</p>
+                </div>
+                <div class="spec-card">
+                    <h3>12</h3>
+                    <p>Attention Heads</p>
+                </div>
+                <div class="spec-card">
+                    <h3>768</h3>
+                    <p>Embedding Dimensions</p>
+                </div>
+                <div class="spec-card">
+                    <h3>256</h3>
+                    <p>Context Length (tokens)</p>
+                </div>
+                <div class="spec-card">
+                    <h3>50,257</h3>
+                    <p>Vocabulary Size</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Data Flow Through the Model</h2>
+            <div class="arch-diagram">
+Input Text: "The painting was"
+    ↓
+┌─────────────────────────────────────────┐
+│ 1. TOKENIZATION (BPE)                   │
+│    "The" → 464                          │
+│    "painting" → 12927                   │
+│    "was" → 373                          │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 2. TOKEN EMBEDDINGS (768-dim vectors)   │
+│    464 → [0.23, -0.45, 0.12, ...]      │
+│    + POSITIONAL ENCODINGS               │
+│    pos_0, pos_1, pos_2                  │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 3. TRANSFORMER BLOCKS (12 layers)       │
+│                                          │
+│  ╔════════════════════════════════════╗ │
+│  ║ Layer 1                            ║ │
+│  ║  • LayerNorm                       ║ │
+│  ║  • Multi-Head Attention (12 heads) ║ │
+│  ║  • Residual Connection             ║ │
+│  ║  • LayerNorm                       ║ │
+│  ║  • FeedForward (768→3072→768)      ║ │
+│  ║  • Residual Connection             ║ │
+│  ╚════════════════════════════════════╝ │
+│           ↓                              │
+│  ╔════════════════════════════════════╗ │
+│  ║ Layer 2 (same structure)           ║ │
+│  ╚════════════════════════════════════╝ │
+│           ↓                              │
+│         ...                              │
+│           ↓                              │
+│  ╔════════════════════════════════════╗ │
+│  ║ Layer 12                           ║ │
+│  ╚════════════════════════════════════╝ │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 4. FINAL LAYER NORM                     │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 5. OUTPUT PROJECTION (768 → 50,257)     │
+│    Logits for each token in vocabulary  │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 6. SOFTMAX → PROBABILITIES              │
+│    P("beautiful") = 0.23                │
+│    P("destroyed") = 0.15                │
+│    P("hanging") = 0.12                  │
+│    ...                                  │
+└─────────────────────────────────────────┘
+    ↓
+┌─────────────────────────────────────────┐
+│ 7. SAMPLING (top-k=50, temp=0.7)       │
+│    Selected token: "hanging"            │
+└─────────────────────────────────────────┘
+    ↓
+Output: "The painting was hanging"
+    ↓
+(Feed back as input for next token...)
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Attention Mechanism Explained</h2>
+            
+            <div class="flow-step">
+                <strong>Query:</strong> "What am I looking for?"<br>
+                Each token creates a query vector asking what information it needs.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Key:</strong> "What information do I have?"<br>
+                Each token creates a key vector describing what it offers.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Value:</strong> "Here's my actual content"<br>
+                Each token has a value vector with its information.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Attention Scores:</strong> Query · Key → Scores<br>
+                Dot product between queries and keys determines relevance.<br>
+                Higher score = more relevant.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Softmax:</strong> Scores → Weights (sum to 1.0)<br>
+                Convert scores to probabilities.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Weighted Sum:</strong> Weights × Values → Output<br>
+                Each token gets a weighted combination of all values,<br>
+                focusing more on relevant tokens.
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Multi-Head Attention</h2>
+            <p>Instead of one attention mechanism, we have <strong>12 parallel heads</strong>. Each head learns different relationships:</p>
+            
+            <div class="arch-diagram">
+Head 1: Subject-verb agreement
+        "The dog [runs]" ← focuses on "dog"
+        
+Head 2: Coreference
+        "John loves [his] dog" ← links "his" to "John"
+        
+Head 3: Semantic similarity
+        "The [car] raced" ← connects "car" with "raced"
+        
+Head 4-12: Other linguistic patterns
+        (syntax, style, context, etc.)
+            </div>
+            
+            <p>All heads run in parallel, then their outputs are concatenated and projected back to 768 dimensions.</p>
+        </div>
+
+        <div class="arch-section">
+            <h2>Why This Architecture Works</h2>
+            
+            <div class="flow-step">
+                <strong>Residual Connections:</strong> Allow gradients to flow directly through all 12 layers during training. Without these, training deep networks would fail.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Layer Normalization:</strong> Keeps activations in a stable range (mean=0, std=1). Prevents exploding/vanishing values.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Feed-Forward Expansion:</strong> 768 → 3072 → 768 gives the model capacity to learn complex patterns. The 4× expansion is a key design choice.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Causal Masking:</strong> During training, tokens can only attend to previous tokens, not future ones. This teaches the model to predict next tokens.
+            </div>
+            
+            <div class="flow-step">
+                <strong>Autoregressive Generation:</strong> At inference, generate one token at a time, feeding each output back as input. This allows open-ended text generation.
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Training Process</h2>
+            
+            <div class="arch-diagram">
+1. Initialize model with random weights
+   ↓
+2. Load training data ("The Verdict" - 5,145 tokens)
+   ↓
+3. Split into batches (batch_size=2, seq_len=256)
+   ↓
+4. For each batch:
+   ┌──────────────────────────────────────┐
+   │ a. Forward pass (predict next tokens)│
+   │ b. Calculate loss (cross-entropy)    │
+   │ c. Backward pass (compute gradients) │
+   │ d. Update weights (AdamW optimizer)  │
+   └──────────────────────────────────────┘
+   ↓
+5. Repeat for 10 epochs
+   ↓
+6. Loss decreases: 11.0 → 2.5 ✓
+   ↓
+7. Save trained model (model.pth - 623MB)
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Production System</h2>
+            <div class="arch-diagram">
+┌─────────────────────────────────────────┐
+│ USER BROWSER                            │
+│  → Types prompt                         │
+│  → Clicks "Send"                        │
+└────────────┬────────────────────────────┘
+             │ HTTPS POST
+             ↓
+┌─────────────────────────────────────────┐
+│ GITHUB PAGES (Frontend)                 │
+│  → JavaScript intercepts                │
+│  → Sends to backend API                 │
+└────────────┬────────────────────────────┘
+             │ POST /generate
+             ↓
+┌─────────────────────────────────────────┐
+│ HUGGING FACE SPACES (Backend)           │
+│  → FastAPI receives request             │
+│  → Loads model.pth (if not in memory)   │
+│  → Tokenizes input                      │
+│  → Runs forward pass (162M params)      │
+│  → Generates 50 tokens (autoregressive) │
+│  → Returns JSON response                │
+└────────────┬────────────────────────────┘
+             │ JSON response
+             ↓
+┌─────────────────────────────────────────┐
+│ USER BROWSER                            │
+│  → Displays generated text              │
+│  → Shows timing ("Generated in 2.3s")   │
+└─────────────────────────────────────────┘
+
+Cold start (first request after sleep): ~10s
+Warm requests: ~2-3s
+            </div>
+        </div>
+
+        <div class="arch-section">
+            <h2>Key Implementation Details</h2>
+            
+            <p><strong>No Shortcuts:</strong> This model was built from scratch using only PyTorch primitives. No <code>transformers</code> library, no pre-built attention modules.</p>
+            
+            <p><strong>Hand-coded components:</strong></p>
+            <ul>
+                <li>Multi-head scaled dot-product attention</li>
+                <li>Positional encoding generation</li>
+                <li>Layer normalization</li>
+                <li>Causal attention masking</li>
+                <li>Training loop with validation</li>
+                <li>Text generation with sampling strategies</li>
+            </ul>
+            
+            <p><strong>Mathematical correctness:</strong> Attention scores are scaled by 1/√d_k to prevent softmax saturation. Residuals ensure gradient flow. LayerNorm uses learned scale/shift parameters.</p>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Demo</a>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
+            <p>Built with PyTorch, deployed with FastAPI & Hugging Face Spaces</p>
+            <p><a href="https://github.com/mrtsm/troelsllm" target="_blank" style="color: #667eea;">View on GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>
